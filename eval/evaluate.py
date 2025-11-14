@@ -88,8 +88,8 @@ def _get_latent_vectors(model, data_set, device, dataset_folder, batch_size):
             continue
 
         img = np.load(npy_path)  # H x W x 3
-        # cylindrical pad (28 px)
-        left, right = img[:, :28], img[:, -28:]
+        # cylindrical pad (32 px)
+        left, right = img[:, :32], img[:, -32:]
         img = np.concatenate([right, img, left], axis=1)
 
         if RESIZE_TO_HELIPR:

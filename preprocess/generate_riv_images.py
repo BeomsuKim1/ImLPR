@@ -432,7 +432,7 @@ k_neighbors = 15 # neighbors for normal estimation
 max_neighbor_m = 15.0 # max neighbor distance for normal estimation
 
 # Image sizes (you can change per-channel if desired), for mulran, H0_img=64, Hf_img=64
-W_img, H0_img, Hf_img = 1022, 128, 126
+W_img, H0_img, Hf_img = 1024, 128, 128
 
 # range scalining (200 for helipr, 120 for mulran)
 max_range_m = 200.0

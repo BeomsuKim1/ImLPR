@@ -22,12 +22,12 @@ def random_yaw_roll(query_hw3: np.ndarray) -> Tuple[np.ndarray, int, float]:
     return np.roll(query_hw3, shift, axis=1), shift, yaw_angle
 
 
-def pad_cylindrical_28(query_hw3_rolled: np.ndarray) -> np.ndarray:
+def pad_cylindrical_32(query_hw3_rolled: np.ndarray) -> np.ndarray:
     """
-    Add 28 px cylindrical padding on both sides (right+query+left).
+    Add 32 px cylindrical padding on both sides (right+query+left).
     """
-    left = query_hw3_rolled[:, :28]
-    right = query_hw3_rolled[:, -28:]
+    left = query_hw3_rolled[:, :32]
+    right = query_hw3_rolled[:, -32:]
     return np.concatenate((right, query_hw3_rolled, left), axis=1)
 
 
@@ -222,7 +222,7 @@ class TrainingDataset(Dataset):
         query, _, yaw_angle1 = random_yaw_roll(query)
 
         # 2) Add 28-px cylindrical padding (right + query + left)
-        query = pad_cylindrical_28(query)
+        query = pad_cylindrical_32(query)
 
         # 3) HWC -> CHW
         query = query.transpose(2, 0, 1)  # (3,H,W)
