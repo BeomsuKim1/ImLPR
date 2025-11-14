@@ -1,4 +1,6 @@
 data/
 weights/
 */__pycache__/
-models/dinov3/*/
+models/dinov3/
+preprocess/HeLiPR_Dataset/
+preprocess/output/

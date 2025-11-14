@@ -411,7 +411,7 @@ def process_one_frame(task):
 
 
 # Datasets to process
-datasets = ["Roundabout01"]
+datasets = ["KAIST04"]
 
 # Rendering config
 v_mode   = "ring"   # 'ring' or 'angle' for range image
@@ -451,7 +451,7 @@ if __name__ == "__main__":
     os.environ.setdefault("NUMEXPR_NUM_THREADS", "1")
 
     # Output
-    save_folder = "/output"
+    save_folder = "output"
     os.makedirs(save_folder, exist_ok=True)
     output_pose_file = os.path.join(save_folder, "poses.txt")
 
