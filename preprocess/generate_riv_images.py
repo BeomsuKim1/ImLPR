@@ -451,7 +451,7 @@ if __name__ == "__main__":
     os.environ.setdefault("NUMEXPR_NUM_THREADS", "1")
 
     # Output
-    save_folder = "output/Riverside"
+    save_folder = "output"
     os.makedirs(save_folder, exist_ok=True)
     output_pose_file = os.path.join(save_folder, "poses.txt")
 

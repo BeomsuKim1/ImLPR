@@ -60,7 +60,7 @@ def construct_query_dict(df_centroids: pd.DataFrame, out_filename: str):
 
 
 if __name__ == "__main__":
-    base_path   = "../data/training"
+    base_path   = "../data/training_dinov3"
     runs_folder = ""     # e.g., "" or "train_subdir/"
     filename    = "poses.txt"
     pointcloud_fols = "" # if you have something like "/subdir" to insert between folder and index
@@ -93,4 +93,4 @@ if __name__ == "__main__":
     df_train = pd.concat(df_train, ignore_index=True)
     print("Number of training submaps:", len(df_train))
 
-    construct_query_dict(df_train, "../data/training_queries.pickle")
+    construct_query_dict(df_train, "../data/training_queries_dinov3.pickle")
