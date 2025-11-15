@@ -428,7 +428,7 @@ gt_kind    = "tum"      # 'tum' or 'kitti'
 dist_threshold = 3.0  # meters
 
 # normal calculation params
-k_neighbors = 15 # neighbors for normal estimation
+k_neighbors = 8 # neighbors for normal estimation
 max_neighbor_m = 15.0 # max neighbor distance for normal estimation
 
 # Image sizes (you can change per-channel if desired), for mulran, H0_img=64, Hf_img=64
@@ -451,7 +451,7 @@ if __name__ == "__main__":
     os.environ.setdefault("NUMEXPR_NUM_THREADS", "1")
 
     # Output
-    save_folder = "output"
+    save_folder = "output/Riverside"
     os.makedirs(save_folder, exist_ok=True)
     output_pose_file = os.path.join(save_folder, "poses.txt")
 
