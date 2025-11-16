@@ -1,7 +1,7 @@
 [DEFAULT]
 model_name = ImLPR_training
 dataset_folder = ../data/
-load_weights =../weights/ImLPR_default.pth
+load_weights =None
 
 [TRAIN]
 num_workers = 6
