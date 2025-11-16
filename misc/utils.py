@@ -17,7 +17,7 @@ class ModelParams:
         cfg.read(model_params_path)
 
         p = cfg["BACKBONE"]
-        self.model_name = p.get("model_name", "dinov2_vits14")
+        self.model_name = p.get("model_name", "dinov3_vits16")
         self.num_trainable_blocks = p.getint("num_trainable_blocks", 2)
         self.adapter_frequency = p.getint("adapter_frequency", 3)
 
