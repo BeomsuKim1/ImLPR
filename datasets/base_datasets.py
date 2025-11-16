@@ -44,9 +44,9 @@ def normalize_to_unit(query_chw: np.ndarray) -> np.ndarray:
 
 def random_block_mask(height: int,
                       width: int,
-                      mask_ratio: float = 0.0,
+                      mask_ratio: float = 0.4,
                       patch_size_min: int = 1,
-                      patch_size_max: int = 14) -> np.ndarray:
+                      patch_size_max: int = 16) -> np.ndarray:
     """
     Randomly zero out multiple square/rect blocks.
     """
@@ -101,8 +101,8 @@ def cylindrical_band_mask(height: int,
 def random_line_masks(height: int,
                       width: int,
                       mask_ratio_line: float = 0.1,
-                      max_v: int = 14,
-                      max_h: int = 140) -> np.ndarray:
+                      max_v: int = 16,
+                      max_h: int = 160) -> np.ndarray:
     """
     Apply several random rectangular "line" masks.
     Number of lines is proportional to mask_ratio_line.
@@ -221,7 +221,7 @@ class TrainingDataset(Dataset):
         # 1) Random cylindrical yaw roll
         query, _, yaw_angle1 = random_yaw_roll(query)
 
-        # 2) Add 28-px cylindrical padding (right + query + left)
+        # 2) Add 32-px cylindrical padding (right + query + left)
         query = pad_cylindrical_32(query)
 
         # 3) HWC -> CHW
