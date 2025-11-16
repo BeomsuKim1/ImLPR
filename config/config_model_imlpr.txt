@@ -1,5 +1,5 @@
 [BACKBONE]
-model_name = dinov2_vits14
+model_name = dinov3_vits16
 num_trainable_blocks = 2
 adapter_frequency = 3
 
