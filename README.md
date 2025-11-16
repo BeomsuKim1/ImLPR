@@ -149,9 +149,9 @@ Use the provided configs:
 Run:
 ```bash
 cd training
-python3 train.py \
-  --config config/config_helipr.txt \
-  --model_config config/config_model_imlpr.txt
+uv run train.py \
+  --config ../config/config_helipr.txt \
+  --model_config ../config/config_model_imlpr.txt
 ```
 
 Notes:

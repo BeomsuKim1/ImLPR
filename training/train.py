@@ -6,6 +6,8 @@ import numpy as np
 import torch
 import tqdm
 
+sys.path.append("../../ImLPR")  # to access models and datasets
+
 from misc.utils import TrainingParams, get_datetime
 from models.losses.loss import make_losses
 from datasets.dataset_utils import make_dataloaders
