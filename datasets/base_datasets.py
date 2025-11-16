@@ -216,7 +216,7 @@ class TrainingDataset(Dataset):
     def __getitem__(self, index):
         # Load (H,W,3)
         file_pathname = os.path.join(self.dataset_path, self.queries[index].rel_scan_filepath)
-        query = np.load(file_pathname, mmap_mode='r')  # H x W x 3
+        query = np.load(file_pathname)  # H x W x 3
 
         # 1) Random cylindrical yaw roll
         query, _, yaw_angle1 = random_yaw_roll(query)
