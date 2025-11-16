@@ -4,9 +4,9 @@ dataset_folder = ../data/training_dinov3/
 load_weights = None
 
 [TRAIN]
-num_workers = 6
-batch_size = 2048
-batch_split_size = 64
+num_workers = 2
+batch_size = 512
+batch_split_size = 8
 val_batch_size = 1
 
 optimizer = AdamW
