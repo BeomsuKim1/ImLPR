@@ -93,4 +93,4 @@ if __name__ == "__main__":
     df_train = pd.concat(df_train, ignore_index=True)
     print("Number of training submaps:", len(df_train))
 
-    construct_query_dict(df_train, "../data/training_queries_dinov3.pickle")
+    construct_query_dict(df_train, "../data/training_queries.pickle")
