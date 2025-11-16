@@ -138,7 +138,7 @@ def make_collate_fn(dataset: TrainingDataset, params: TrainingParams):
                                  points2_transformed: np.ndarray,
                                  azimuth_angles: np.ndarray,
                                  elevation_angles: np.ndarray,
-                                 patch_size: int = 14,
+                                 patch_size: int = 16,
                                  image_width: int = 1078,
                                  image_height: int = 126) -> Dict[Tuple[int, int], Tuple[int, int]]:
         """
@@ -183,7 +183,7 @@ def make_collate_fn(dataset: TrainingDataset, params: TrainingParams):
     def get_positive_pairs(image1: np.ndarray,
                            transformed_image2: np.ndarray,
                            reprojected_indices: Dict[Tuple[int, int], Tuple[int, int]],
-                           patch_size: int = 14,
+                           patch_size: int = 16,
                            range_threshold: float = 1.0,
                            min_valid_ratio: float = 0.5) -> List[Tuple[Tuple[int, int], Tuple[int, int]]]:
         """
@@ -313,9 +313,9 @@ def make_collate_fn(dataset: TrainingDataset, params: TrainingParams):
 
 
         for i, j in sampled_pairs:
-            # Channel-2 (index 1): range in [0,255], crop columns [28:-28], rescale to meters
-            query_range = (clouds_np[i][1][:, 28:-28]) * params.sensor_range
-            positive_range = (clouds_np[j][1][:, 28:-28]) * params.sensor_range
+            # Channel-2 (index 1): range in [0,255], crop columns [32:-32], rescale to meters
+            query_range = (clouds_np[i][1][:, 32:-32]) * params.sensor_range
+            positive_range = (clouds_np[j][1][:, 32:-32]) * params.sensor_range
 
             # Back-project both to 3D
             pts1 = backproject_range_image(query_range, azimuth_angles, elevation_angles)
@@ -354,14 +354,14 @@ def make_collate_fn(dataset: TrainingDataset, params: TrainingParams):
             Hq, Wq = query_range.shape
             repro = project_image2_to_image1(
                 pts2, pts2_refined, azimuth_angles, elevation_angles,
-                patch_size=14, image_width=Wq, image_height=Hq
+                patch_size=16, image_width=Wq, image_height=Hq
             )
 
             # Re-render refined points to range image, then pair patches
             img2_refined = project_points_to_range_image(pts2_refined, azimuth_angles, elevation_angles, Wq, Hq)
             pos_pairs_ij = get_positive_pairs(
                 query_range, img2_refined, repro,
-                patch_size=14, range_threshold=0.8, min_valid_ratio=0.5
+                patch_size=16, range_threshold=0.8, min_valid_ratio=0.5
             )
             positive_pairs.append(pos_pairs_ij)
 
