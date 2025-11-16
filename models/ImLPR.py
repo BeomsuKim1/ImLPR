@@ -3,6 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import numpy as np
 import math
+import glob
 from torch.nn.parameter import Parameter
 
 
@@ -74,14 +75,9 @@ class SALAD(nn.Module):
 
         return F.normalize(f, p=2, dim=-1)
 
-
-DINOV2_ARCHS = {
-    'dinov2_vits14': 384,
-    'dinov2_vitb14': 768,
-    'dinov2_vitl14': 1024,
-    'dinov2_vitg14': 1536,
+DINOV3_ARCHS = {
+    'dinov3_vits16': 384,
 }
-
 
 class MultiConvAdapter(nn.Module):
     """Parallel 1x1/3x3/5x5 conv adapter on token maps (from paper in SelaVPR++)."""
@@ -97,7 +93,7 @@ class MultiConvAdapter(nn.Module):
 
     def forward(self, x, H=None):
         B, C = x.size(0), x.size(2)
-        x = x.view(B, C, H // 14, -1)
+        x = x.view(B, C, H // 16, -1)
         x = self.relu(x)
         o1 = self.conv1x1(x)
         o3 = self.conv3x3(self.conv1x1_for_3(x))
@@ -105,18 +101,29 @@ class MultiConvAdapter(nn.Module):
         y = torch.cat([o1, o3, o5], dim=1) + x
         return y.view(B, -1, C)
 
-
-class AdaptedDINOv2(nn.Module):
+class AdaptedDINOv3(nn.Module):
     def __init__(self, params):
         super().__init__()
         self.params = params
         model_name = params.model_name
-        assert model_name in DINOV2_ARCHS, f'Unknown model name {model_name}'
-        self.model = torch.hub.load('facebookresearch/dinov2', model_name)
-        self.num_channels = DINOV2_ARCHS[model_name]
+        assert model_name in DINOV3_ARCHS, f'Unknown model name {model_name}'
+
+        # Resolve weight file path using glob
+        weight_pattern = f'../models/dinov3/{model_name}_pretrain_*.pth'
+        weight_files = glob.glob(weight_pattern)
+
+        # Assert exactly one matching file exists
+        assert len(weight_files) > 0, f'No weights found for {model_name} at {weight_pattern}'
+        assert len(weight_files) == 1, f'Multiple weight files found for {model_name}: {weight_files}'
+
+        weights_path = weight_files[0]
+
+        self.model = torch.hub.load('../models/dinov3', model_name, source='local', weights=weights_path)
+        self.num_channels = DINOV3_ARCHS[model_name]
         self.num_trainable_blocks = params.num_trainable_blocks
         self.norm_layer = True
         self.return_token = True
+        self.n_storage_tokens = self.model.n_storage_tokens
 
         self.num_blocks = len(self.model.blocks)
         self.multi_conv_adapters = nn.ModuleList(
@@ -125,17 +132,17 @@ class AdaptedDINOv2(nn.Module):
 
     def forward(self, x):
         B, C, H, W = x.shape
-        x = self.model.prepare_tokens_with_masks(x)
+        x, _ = self.model.prepare_tokens_with_masks(x)
 
         output = []
         for blk in self.model.blocks[:-self.num_trainable_blocks]:
             x = blk(x)
-            output.append(x[:, 1:])
+            output.append(x[:, 1 + self.n_storage_tokens:])
         x = x.detach()
 
         for blk in self.model.blocks[-self.num_trainable_blocks:]:
             x = blk(x)
-            output.append(x[:, 1:])
+            output.append(x[:, 1 + self.n_storage_tokens:])
 
         for i in range(len(self.multi_conv_adapters)):
             if i == 0:
@@ -150,15 +157,14 @@ class AdaptedDINOv2(nn.Module):
 
         t = x[:, 0]
         f = x[:, 1:]
-        f = f.reshape((B, H // 14, W // 14, self.num_channels)).permute(0, 3, 1, 2)
+        f = f.reshape((B, H // 16, W // 16, self.num_channels)).permute(0, 3, 1, 2)
 
         return (f, t) if self.return_token else f
-
-
+    
 class AdaptedViT(nn.Module):
     def __init__(self, params):
         super(AdaptedViT, self).__init__()
-        self.encoder = AdaptedDINOv2(params)
+        self.encoder = AdaptedDINOv3(params)
 
     def forward(self, x):
         x, t = self.encoder(x)
